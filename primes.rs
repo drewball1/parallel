@@ -64,8 +64,9 @@ fn run_sieve(n: u64){
                     }
                 }
             }
-    println!("Time Elapsed: {:?} Num Primes: {:?} Sum: {:?}",new_now.duration_since(now), num, sum);
-    println!("Top Ten: {:?}",prime_list);
+            let mut file = std::fs::File::create("primes.txt").expect("create failed");
+            writeln!(&mut file, "Time Elapsed: {:?} Num Primes: {:?} Sum: {:?}", new_now.duration_since(now), num, sum).expect("write failed");
+            writeln!(&mut file, "Top Ten: {:?}",prime_list).expect("write failed");
 
 }
 
