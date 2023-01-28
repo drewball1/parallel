@@ -5,6 +5,7 @@ number up to the square root of our target(10^8), we find all numbers that are f
 are in fact prime, and all falses are composite.
 
 To explain a couple weird values:
+
 ***let s: u64 = 4999999949999999;***
 
 ***let np: u64 = 99999998;***
