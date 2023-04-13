@@ -1,0 +1,84 @@
+package Problem2;
+import java.security.SecureRandom;
+import java.util.Collections;
+import java.util.PriorityQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+
+public class TemperatureAnalyzer {
+	public static void main(String[] args) {
+		int max = 0;
+		int min = 200;
+		int bigDiff = 0;
+		int minutex = 0;
+		int minutey = 0;
+		
+		DataTable table = new DataTable();
+		ExecutorService application = Executors.newFixedThreadPool(8);
+		try {
+			
+			for (int i = 1; i <= 8; i++) {
+				application.execute(new Sensor(table, i));
+			}
+			PriorityQueue<Integer> maxQ = new PriorityQueue(5);
+			PriorityQueue<Integer> minQ = new PriorityQueue(5,Collections.reverseOrder());
+			for(int i=0;i<60;i++) {
+				for(int j=0;j<8;j++) {
+					int tmp = table.data[i][j];
+					if(minQ.size() < 5 ) {
+						minQ.add(tmp);
+						maxQ.add(tmp);
+					}
+					else {
+						if(minQ.size() == 5 && tmp < minQ.peek()) {
+							minQ.remove();
+							minQ.add(tmp);
+						}
+						if(maxQ.size() == 5 && tmp > maxQ.peek()) {
+							maxQ.remove();
+							maxQ.add(tmp);
+						}
+						
+					}
+					
+				}
+				if(i+10<60) {
+					for(int k=0;k<10;k++) {
+						for(int l=0;l<8;l++) {
+							if(table.data[i+k][l] > max) {
+								max = table.data[i+k][l];
+							}
+							if(table.data[i+k][l] < min) {
+								min = table.data[i+k][l];
+							}
+						}
+					}
+					if((max-min) > bigDiff) {
+						bigDiff = max - min;
+						minutex = i;
+						minutey= i+10;
+					}	
+				}
+			}
+			
+			Object[] mins = minQ.toArray();
+			Object[] maxs = maxQ.toArray();
+			
+			
+			System.out.printf("Lowest 5: %d %d %d %d %d \n",mins[0],mins[1],mins[2],mins[3],mins[4]);
+			System.out.printf("Highest 5: %d %d %d %d %d \n",maxs[0],maxs[1],maxs[2],maxs[3],maxs[4]);
+			System.out.printf("Largest 10 minute temperature difference interval was minute %d to minute %d with a high of %d and a low of %d", minutex,minutey,max,min);
+			
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		try {
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.exit(0);
+	}
+}
